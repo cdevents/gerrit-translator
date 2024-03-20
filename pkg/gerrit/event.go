@@ -19,7 +19,6 @@ package gerrit
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -80,7 +79,7 @@ func (pEvent *GerritEvent) TranslateIntoCDEvent() (string, error) {
 		}
 	default:
 		log.Printf("Not handling CDEvent translation for Gerrit event type: %s\n", eventMap["type"])
-		return "", errors.New(fmt.Sprintf("Gerrit event %s, not supported for translation", eventType))
+		return "", fmt.Errorf("gerrit event type %s, not supported for translation", eventType)
 	}
 	return cdEvent, nil
 }
