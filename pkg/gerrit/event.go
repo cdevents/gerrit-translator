@@ -77,6 +77,26 @@ func (pEvent *GerritEvent) TranslateIntoCDEvent() (string, error) {
 		if err != nil {
 			return "", err
 		}
+	case "patchset-created":
+		cdEvent, err = pEvent.HandlePatchsetCreatedEvent()
+		if err != nil {
+			return "", err
+		}
+	case "comment-added":
+		cdEvent, err = pEvent.HandleCommentAddedEvent()
+		if err != nil {
+			return "", err
+		}
+	case "change-merged":
+		cdEvent, err = pEvent.HandleChangeMergedEvent()
+		if err != nil {
+			return "", err
+		}
+	case "change-abandoned":
+		cdEvent, err = pEvent.HandleChangeAbandonedEvent()
+		if err != nil {
+			return "", err
+		}
 	default:
 		log.Printf("Not handling CDEvent translation for Gerrit event type: %s\n", eventMap["type"])
 		return "", fmt.Errorf("gerrit event type %s, not supported for translation", eventType)

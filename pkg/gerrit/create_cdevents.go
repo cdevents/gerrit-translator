@@ -99,3 +99,103 @@ func (refUpdated *RefUpdated) BranchDeletedCDEvent() (string, error) {
 	}
 	return cdEventStr, nil
 }
+
+func (patchsetCreated *PatchsetCreated) ChangeCreatedCDEvent() (string, error) {
+	log.Println("Creating CDEvent ChangeCreatedEvent")
+	cdEvent, err := sdk.NewChangeCreatedEvent()
+	if err != nil {
+		log.Printf("Error creating CDEvent ChangeCreatedEvent %s\n", err)
+		return "", err
+	}
+	cdEvent.SetSource(patchsetCreated.RepoURL)
+	cdEvent.SetSubjectId(patchsetCreated.Change.Branch)
+	cdEvent.SetSubjectSource(patchsetCreated.Change.Url)
+	cdEvent.SetSubjectRepository(&sdk.Reference{Id: patchsetCreated.Project.Name})
+	cdEventStr, err := sdk.AsJsonString(cdEvent)
+	if err != nil {
+		log.Printf("Error creating ChangeCreated CDEvent as Json string %s\n", err)
+		return "", err
+	}
+
+	return cdEventStr, nil
+}
+
+func (patchsetCreated *PatchsetCreated) ChangeUpdatedCDEvent() (string, error) {
+	log.Println("Creating CDEvent ChangeUpdatedEvent")
+	cdEvent, err := sdk.NewChangeUpdatedEvent()
+	if err != nil {
+		log.Printf("Error creating CDEvent ChangeUpdatedEvent %s\n", err)
+		return "", err
+	}
+	cdEvent.SetSource(patchsetCreated.RepoURL)
+	cdEvent.SetSubjectId(patchsetCreated.Change.Branch)
+	cdEvent.SetSubjectSource(patchsetCreated.Change.Url)
+	cdEvent.SetSubjectRepository(&sdk.Reference{Id: patchsetCreated.Project.Name})
+	cdEventStr, err := sdk.AsJsonString(cdEvent)
+	if err != nil {
+		log.Printf("Error creating ChangeUpdated CDEvent as Json string %s\n", err)
+		return "", err
+	}
+
+	return cdEventStr, nil
+}
+
+func (commentAdded *CommentAdded) ChangeReviewedCDEvent() (string, error) {
+	log.Println("Creating CDEvent ChangeReviewedEvent")
+	cdEvent, err := sdk.NewChangeReviewedEvent()
+	if err != nil {
+		log.Printf("Error creating CDEvent ChangeReviewedEvent %s\n", err)
+		return "", err
+	}
+	cdEvent.SetSource(commentAdded.RepoURL)
+	cdEvent.SetSubjectId(commentAdded.Change.Branch)
+	cdEvent.SetSubjectSource(commentAdded.Change.Url)
+	cdEvent.SetSubjectRepository(&sdk.Reference{Id: commentAdded.Project.Name})
+	cdEventStr, err := sdk.AsJsonString(cdEvent)
+	if err != nil {
+		log.Printf("Error creating ChangeReviewed CDEvent as Json string %s\n", err)
+		return "", err
+	}
+
+	return cdEventStr, nil
+}
+
+func (changeMerged *ChangeMerged) ChangeMergedCDEvent() (string, error) {
+	log.Println("Creating CDEvent ChangeMergedEvent")
+	cdEvent, err := sdk.NewChangeMergedEvent()
+	if err != nil {
+		log.Printf("Error creating CDEvent ChangeMergedEvent %s\n", err)
+		return "", err
+	}
+	cdEvent.SetSource(changeMerged.RepoURL)
+	cdEvent.SetSubjectId(changeMerged.Change.Branch)
+	cdEvent.SetSubjectSource(changeMerged.Change.Url)
+	cdEvent.SetSubjectRepository(&sdk.Reference{Id: changeMerged.Project.Name})
+	cdEventStr, err := sdk.AsJsonString(cdEvent)
+	if err != nil {
+		log.Printf("Error creating ChangeMerged CDEvent as Json string %s\n", err)
+		return "", err
+	}
+
+	return cdEventStr, nil
+}
+
+func (changeAbandoned *ChangeAbandoned) ChangeAbandonedCDEvent() (string, error) {
+	log.Println("Creating CDEvent ChangeAbandonedEvent")
+	cdEvent, err := sdk.NewChangeAbandonedEvent()
+	if err != nil {
+		log.Printf("Error creating CDEvent ChangeAbandonedEvent %s\n", err)
+		return "", err
+	}
+	cdEvent.SetSource(changeAbandoned.RepoURL)
+	cdEvent.SetSubjectId(changeAbandoned.Change.Branch)
+	cdEvent.SetSubjectSource(changeAbandoned.Change.Url)
+	cdEvent.SetSubjectRepository(&sdk.Reference{Id: changeAbandoned.Project.Name})
+	cdEventStr, err := sdk.AsJsonString(cdEvent)
+	if err != nil {
+		log.Printf("Error creating ChangeAbandoned CDEvent as Json string %s\n", err)
+		return "", err
+	}
+
+	return cdEventStr, nil
+}
