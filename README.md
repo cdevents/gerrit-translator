@@ -7,9 +7,9 @@ The binary of this plugin is published with a release URL and is used by externa
 The published plugin's binary can be downloaded and loaded by creating a new plugin client using HashiCorp's go-plugin, which manages the lifecycle of this plugin and establishes the RPC connection.
 
 ### How to run locally
-Run the below command from the project root directory, which creates a plugin's binary with the name `gerrit-translator-cdevents`
-````go
-go build -o gerrit-translator-cdevents ./pkg/
+Run the `make` command from the project root directory, which creates a plugin's binary with the name `gerrit-translator-cdevents`
+````make
+make all
 ````
 
 ### Gerrit-CDEvents type mapping for translation

@@ -20,7 +20,6 @@ package gerrit
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -35,7 +34,7 @@ func NewGerritEvent(event string, repoURL string) (pEvent *GerritEvent) {
 }
 
 func HandleTranslateGerritEvent(event string, header http.Header) (string, error) {
-	log.Printf("Handle translation into CDEvent from Gerrit event %s\n", event)
+	Log().Info("Handle translation into CDEvent from Gerrit event %s\n", event)
 	repoURL := ""
 	if header.Get("X-Origin-Url") != "" {
 		repoURL = header.Get("X-Origin-Url")
@@ -43,10 +42,10 @@ func HandleTranslateGerritEvent(event string, header http.Header) (string, error
 	gerritEvent := NewGerritEvent(event, repoURL)
 	cdEvent, err := gerritEvent.TranslateIntoCDEvent()
 	if err != nil {
-		log.Printf("Error translating Gerrit event into CDEvent %s\n", err)
+		Log().Error("Error translating Gerrit event into CDEvent %s\n", err)
 		return "", err
 	}
-	log.Printf("Gerrit Event translated into CDEvent %s\n", cdEvent)
+	Log().Info("Gerrit Event translated into CDEvent %s\n", cdEvent)
 	return cdEvent, nil
 }
 
@@ -55,11 +54,11 @@ func (pEvent *GerritEvent) TranslateIntoCDEvent() (string, error) {
 	cdEvent := ""
 	err := json.Unmarshal([]byte(pEvent.Event), &eventMap)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal gerritEvent data into gerritEvent map", err)
+		Log().Error("Error occurred while Unmarshal gerritEvent data into gerritEvent map", err)
 		return "", err
 	}
 	eventType := eventMap["type"]
-	log.Printf("handling translating to CDEvent from Gerrit Event type: %s\n", eventType)
+	Log().Info("handling translating to CDEvent from Gerrit Event type: %s\n", eventType)
 
 	switch eventType {
 	case "project-created":
@@ -78,7 +77,7 @@ func (pEvent *GerritEvent) TranslateIntoCDEvent() (string, error) {
 			return "", err
 		}
 	default:
-		log.Printf("Not handling CDEvent translation for Gerrit event type: %s\n", eventMap["type"])
+		Log().Info("Not handling CDEvent translation for Gerrit event type: %s\n", eventMap["type"])
 		return "", fmt.Errorf("gerrit event type %s, not supported for translation", eventType)
 	}
 	return cdEvent, nil
