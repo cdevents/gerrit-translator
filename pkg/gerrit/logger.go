@@ -12,7 +12,12 @@ func InitLogger() {
 	if err != nil {
 		panic("failed to initialize logger: " + err.Error())
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err := logger.Sync()
+		if err != nil {
+			panic("failed to initialize logger Sync: " + err.Error())
+		}
+	}(logger)
 	sugar = logger.Sugar()
 }
 
