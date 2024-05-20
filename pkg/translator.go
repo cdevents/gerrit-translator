@@ -18,10 +18,11 @@ SPDX-License-Identifier: Apache-2.0
 package main
 
 import (
+	"net/http"
+
 	"github.com/cdevents/gerrit-translator/pkg/gerrit"
 	"github.com/cdevents/webhook-adapter/pkg/cdevents"
 	"github.com/hashicorp/go-plugin"
-	"net/http"
 )
 
 type EventTranslator struct{}
@@ -37,7 +38,6 @@ func (EventTranslator) TranslateEvent(event string, headers http.Header) (string
 }
 
 func main() {
-	gerrit.InitLogger()
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: cdevents.Handshake,
 		Plugins: map[string]plugin.Plugin{
