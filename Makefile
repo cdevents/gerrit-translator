@@ -10,7 +10,7 @@ PKG_DIR=./pkg/
 all: fmt vet test build
 
 build:
-	$(GOBUILD) -o $(BINARY_NAME) $(PKG_DIR)
+	CGO_ENABLED=0 GOOS=linux $(GOBUILD) -o $(BINARY_NAME) $(PKG_DIR)
 
 test:
 	$(GOTEST) -v ./...
