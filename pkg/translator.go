@@ -18,18 +18,18 @@ SPDX-License-Identifier: Apache-2.0
 package main
 
 import (
+	"net/http"
+
 	"github.com/cdevents/gerrit-translator/pkg/gerrit"
 	"github.com/cdevents/webhook-adapter/pkg/cdevents"
 	"github.com/hashicorp/go-plugin"
-	"log"
-	"net/http"
 )
 
 type EventTranslator struct{}
 
 // TranslateEvent Invoked from external application to translate Gerrit event into CDEvent
 func (EventTranslator) TranslateEvent(event string, headers http.Header) (string, error) {
-	log.Println("Serving from gerrit-translator plugin")
+	gerrit.Log().Info("Serving from gerrit-translator plugin")
 	cdEvent, err := gerrit.HandleTranslateGerritEvent(event, headers)
 	if err != nil {
 		return "", err

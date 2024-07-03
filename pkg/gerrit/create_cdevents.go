@@ -19,14 +19,13 @@ package gerrit
 
 import (
 	sdk "github.com/cdevents/sdk-go/pkg/api"
-	"log"
 )
 
 func (projectCreated *ProjectCreated) RepositoryCreatedCDEvent() (string, error) {
-	log.Println("Creating CDEvent RepositoryCreatedEvent")
+	Log().Info("Creating CDEvent RepositoryCreatedEvent")
 	cdEvent, err := sdk.NewRepositoryCreatedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent RepositoryCreatedEvent %s\n", err)
+		Log().Error("Error creating CDEvent RepositoryCreatedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(projectCreated.RepoURL)
@@ -35,7 +34,7 @@ func (projectCreated *ProjectCreated) RepositoryCreatedCDEvent() (string, error)
 	cdEvent.SetSubjectUrl(projectCreated.RepoURL)
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating RepositoryCreated CDEvent as Json string %s\n", err)
+		Log().Error("Error creating RepositoryCreated CDEvent as Json string %s\n", err)
 		return "", err
 	}
 
@@ -43,10 +42,10 @@ func (projectCreated *ProjectCreated) RepositoryCreatedCDEvent() (string, error)
 }
 
 func (projectHeadUpdated *ProjectHeadUpdated) RepositoryModifiedCDEvent() (string, error) {
-	log.Println("Creating CDEvent RepositoryModifiedEvent")
+	Log().Info("Creating CDEvent RepositoryModifiedEvent")
 	cdEvent, err := sdk.NewRepositoryModifiedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent RepositoryModified %s\n", err)
+		Log().Error("Error creating CDEvent RepositoryModified %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(projectHeadUpdated.RepoURL)
@@ -55,7 +54,7 @@ func (projectHeadUpdated *ProjectHeadUpdated) RepositoryModifiedCDEvent() (strin
 	cdEvent.SetSubjectUrl(projectHeadUpdated.NewHead)
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating RepositoryModified CDEvent as Json string %s\n", err)
+		Log().Error("Error creating RepositoryModified CDEvent as Json string %s\n", err)
 		return "", err
 	}
 
@@ -63,9 +62,10 @@ func (projectHeadUpdated *ProjectHeadUpdated) RepositoryModifiedCDEvent() (strin
 }
 
 func (refUpdated *RefUpdated) BranchCreatedCDEvent() (string, error) {
+	Log().Info("Creating CDEvent BranchCreatedEvent")
 	cdEvent, err := sdk.NewBranchCreatedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent BranchCreatedEvent %s\n", err)
+		Log().Error("Error creating CDEvent BranchCreatedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(refUpdated.RepoURL)
@@ -75,16 +75,17 @@ func (refUpdated *RefUpdated) BranchCreatedCDEvent() (string, error) {
 
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating BranchCreated CDEvent as Json string %s\n", err)
+		Log().Error("Error creating BranchCreated CDEvent as Json string %s\n", err)
 		return "", err
 	}
 	return cdEventStr, nil
 }
 
 func (refUpdated *RefUpdated) BranchDeletedCDEvent() (string, error) {
+	Log().Info("Creating CDEvent BranchDeletedEvent")
 	cdEvent, err := sdk.NewBranchDeletedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent BranchDeletedEvent %s\n", err)
+		Log().Error("Error creating CDEvent BranchDeletedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(refUpdated.RepoURL)
@@ -94,17 +95,17 @@ func (refUpdated *RefUpdated) BranchDeletedCDEvent() (string, error) {
 
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating BranchDeleted CDEvent as Json string %s\n", err)
+		Log().Error("Error creating BranchDeleted CDEvent as Json string %s\n", err)
 		return "", err
 	}
 	return cdEventStr, nil
 }
 
 func (patchsetCreated *PatchsetCreated) ChangeCreatedCDEvent() (string, error) {
-	log.Println("Creating CDEvent ChangeCreatedEvent")
+	Log().Info("Creating CDEvent ChangeCreatedEvent")
 	cdEvent, err := sdk.NewChangeCreatedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent ChangeCreatedEvent %s\n", err)
+		Log().Error("Error creating CDEvent ChangeCreatedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(patchsetCreated.RepoURL)
@@ -113,7 +114,7 @@ func (patchsetCreated *PatchsetCreated) ChangeCreatedCDEvent() (string, error) {
 	cdEvent.SetSubjectRepository(&sdk.Reference{Id: patchsetCreated.Project.Name})
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating ChangeCreated CDEvent as Json string %s\n", err)
+		Log().Error("Error creating ChangeCreated CDEvent as Json string %s\n", err)
 		return "", err
 	}
 
@@ -121,10 +122,10 @@ func (patchsetCreated *PatchsetCreated) ChangeCreatedCDEvent() (string, error) {
 }
 
 func (patchsetCreated *PatchsetCreated) ChangeUpdatedCDEvent() (string, error) {
-	log.Println("Creating CDEvent ChangeUpdatedEvent")
+	Log().Info("Creating CDEvent ChangeUpdatedEvent")
 	cdEvent, err := sdk.NewChangeUpdatedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent ChangeUpdatedEvent %s\n", err)
+		Log().Error("Error creating CDEvent ChangeUpdatedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(patchsetCreated.RepoURL)
@@ -133,7 +134,7 @@ func (patchsetCreated *PatchsetCreated) ChangeUpdatedCDEvent() (string, error) {
 	cdEvent.SetSubjectRepository(&sdk.Reference{Id: patchsetCreated.Project.Name})
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating ChangeUpdated CDEvent as Json string %s\n", err)
+		Log().Error("Error creating ChangeUpdated CDEvent as Json string %s\n", err)
 		return "", err
 	}
 
@@ -141,10 +142,10 @@ func (patchsetCreated *PatchsetCreated) ChangeUpdatedCDEvent() (string, error) {
 }
 
 func (commentAdded *CommentAdded) ChangeReviewedCDEvent() (string, error) {
-	log.Println("Creating CDEvent ChangeReviewedEvent")
+	Log().Info("Creating CDEvent ChangeReviewedEvent")
 	cdEvent, err := sdk.NewChangeReviewedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent ChangeReviewedEvent %s\n", err)
+		Log().Error("Error creating CDEvent ChangeReviewedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(commentAdded.RepoURL)
@@ -153,7 +154,7 @@ func (commentAdded *CommentAdded) ChangeReviewedCDEvent() (string, error) {
 	cdEvent.SetSubjectRepository(&sdk.Reference{Id: commentAdded.Project.Name})
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating ChangeReviewed CDEvent as Json string %s\n", err)
+		Log().Error("Error creating ChangeReviewed CDEvent as Json string %s\n", err)
 		return "", err
 	}
 
@@ -161,10 +162,10 @@ func (commentAdded *CommentAdded) ChangeReviewedCDEvent() (string, error) {
 }
 
 func (changeMerged *ChangeMerged) ChangeMergedCDEvent() (string, error) {
-	log.Println("Creating CDEvent ChangeMergedEvent")
+	Log().Info("Creating CDEvent ChangeMergedEvent")
 	cdEvent, err := sdk.NewChangeMergedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent ChangeMergedEvent %s\n", err)
+		Log().Error("Error creating CDEvent ChangeMergedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(changeMerged.RepoURL)
@@ -173,7 +174,7 @@ func (changeMerged *ChangeMerged) ChangeMergedCDEvent() (string, error) {
 	cdEvent.SetSubjectRepository(&sdk.Reference{Id: changeMerged.Project.Name})
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating ChangeMerged CDEvent as Json string %s\n", err)
+		Log().Error("Error creating ChangeMerged CDEvent as Json string %s\n", err)
 		return "", err
 	}
 
@@ -181,10 +182,10 @@ func (changeMerged *ChangeMerged) ChangeMergedCDEvent() (string, error) {
 }
 
 func (changeAbandoned *ChangeAbandoned) ChangeAbandonedCDEvent() (string, error) {
-	log.Println("Creating CDEvent ChangeAbandonedEvent")
+	Log().Info("Creating CDEvent ChangeAbandonedEvent")
 	cdEvent, err := sdk.NewChangeAbandonedEvent()
 	if err != nil {
-		log.Printf("Error creating CDEvent ChangeAbandonedEvent %s\n", err)
+		Log().Error("Error creating CDEvent ChangeAbandonedEvent %s\n", err)
 		return "", err
 	}
 	cdEvent.SetSource(changeAbandoned.RepoURL)
@@ -193,7 +194,7 @@ func (changeAbandoned *ChangeAbandoned) ChangeAbandonedCDEvent() (string, error)
 	cdEvent.SetSubjectRepository(&sdk.Reference{Id: changeAbandoned.Project.Name})
 	cdEventStr, err := sdk.AsJsonString(cdEvent)
 	if err != nil {
-		log.Printf("Error creating ChangeAbandoned CDEvent as Json string %s\n", err)
+		Log().Error("Error creating ChangeAbandoned CDEvent as Json string %s\n", err)
 		return "", err
 	}
 

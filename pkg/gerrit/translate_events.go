@@ -20,7 +20,6 @@ package gerrit
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"strings"
 )
 
@@ -28,16 +27,16 @@ func (pEvent *GerritEvent) HandleProjectCreatedEvent() (string, error) {
 	var projectCreated ProjectCreated
 	err := json.Unmarshal([]byte(pEvent.Event), &projectCreated)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal GerritEvent into ProjectCreated struct", err)
+		Log().Error("Error occurred while Unmarshal GerritEvent into ProjectCreated struct", err)
 		return "", err
 	}
-	log.Println("ProjectCreated GerritEvent received : ", projectCreated.ProjectName, projectCreated.HeadName, projectCreated.CommonFields.Type)
+	Log().Info("ProjectCreated GerritEvent received : ", projectCreated.ProjectName, projectCreated.HeadName, projectCreated.CommonFields.Type)
 	projectCreated.RepoURL = pEvent.RepoURL
 	cdEvent, err := projectCreated.RepositoryCreatedCDEvent()
 	if err != nil {
 		return "", err
 	}
-	log.Println("Translated project-created gerrit event into dev.cdevents.repository.created CDEvent: ", cdEvent)
+	Log().Info("Translated project-created gerrit event into dev.cdevents.repository.created CDEvent: ", cdEvent)
 	return cdEvent, nil
 }
 
@@ -45,16 +44,16 @@ func (pEvent *GerritEvent) HandleProjectHeadUpdatedEvent() (string, error) {
 	var projectHeadUpdated ProjectHeadUpdated
 	err := json.Unmarshal([]byte(pEvent.Event), &projectHeadUpdated)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal GerritEvent into ProjectHeadUpdated struct", err)
+		Log().Error("Error occurred while Unmarshal GerritEvent into ProjectHeadUpdated struct", err)
 		return "", err
 	}
-	log.Println("ProjectHeadUpdated GerritEvent received for project : ", projectHeadUpdated.ProjectName)
+	Log().Info("ProjectHeadUpdated GerritEvent received for project : ", projectHeadUpdated.ProjectName)
 	projectHeadUpdated.RepoURL = pEvent.RepoURL
 	cdEvent, err := projectHeadUpdated.RepositoryModifiedCDEvent()
 	if err != nil {
 		return "", err
 	}
-	log.Println("Translated project-head-updated gerrit event into dev.cdevents.repository.modified CDEvent: ", cdEvent)
+	Log().Info("Translated project-head-updated gerrit event into dev.cdevents.repository.modified CDEvent: ", cdEvent)
 	return cdEvent, nil
 }
 
@@ -63,26 +62,26 @@ func (pEvent *GerritEvent) HandleRefUpdatedEvent() (string, error) {
 	var refUpdated RefUpdated
 	err := json.Unmarshal([]byte(pEvent.Event), &refUpdated)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal GerritEvent into RefUpdated struct", err)
+		Log().Error("Error occurred while Unmarshal GerritEvent into RefUpdated struct", err)
 		return "", err
 	}
-	log.Println("RefUpdated GerritEvent received : ", refUpdated.RefUpdate.RefName, refUpdated.Submitter.Name, refUpdated.CommonFields.Type)
+	Log().Info("RefUpdated GerritEvent received : ", refUpdated.RefUpdate.RefName, refUpdated.Submitter.Name, refUpdated.CommonFields.Type)
 	refUpdated.RepoURL = pEvent.RepoURL
 	if strings.Contains(refUpdated.RefUpdate.RefName, "refs/changes") {
-		log.Println("Ignoring handling ref-updated gerrit event as this is followed by patchset/change events: ", refUpdated)
+		Log().Info("Ignoring handling ref-updated gerrit event as this is followed by patchset/change events: ", refUpdated)
 		return "", errors.New("ignoring translating ref-updated gerrit event")
 	} else if refUpdated.RefUpdate.OldRev == "0000000000000000000000000000000000000000" {
 		cdEvent, err = refUpdated.BranchCreatedCDEvent()
 		if err != nil {
 			return "", err
 		}
-		log.Println("Translated ref-updated gerrit event into dev.cdevents.branch.created CDEvent: ", cdEvent)
+		Log().Info("Translated ref-updated gerrit event into dev.cdevents.branch.created CDEvent: ", cdEvent)
 	} else if refUpdated.RefUpdate.NewRev == "0000000000000000000000000000000000000000" {
 		cdEvent, err = refUpdated.BranchDeletedCDEvent()
 		if err != nil {
 			return "", err
 		}
-		log.Println("Translated ref-updated gerrit event into dev.cdevents.branch.deleted CDEvent: ", cdEvent)
+		Log().Info("Translated ref-updated gerrit event into dev.cdevents.branch.deleted CDEvent: ", cdEvent)
 	}
 
 	return cdEvent, nil
@@ -93,23 +92,23 @@ func (pEvent *GerritEvent) HandlePatchsetCreatedEvent() (string, error) {
 	var patchsetCreated PatchsetCreated
 	err := json.Unmarshal([]byte(pEvent.Event), &patchsetCreated)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal GerritEvent into PatchsetCreated struct", err)
+		Log().Error("Error occurred while Unmarshal GerritEvent into PatchsetCreated struct", err)
 		return "", err
 	}
-	log.Println("PatchsetCreated GerritEvent received for project : ", patchsetCreated.Project.Name)
+	Log().Info("PatchsetCreated GerritEvent received for project : ", patchsetCreated.Project.Name)
 	patchsetCreated.RepoURL = pEvent.RepoURL
 	if patchsetCreated.PatchSet.Number == 1 {
 		cdEvent, err = patchsetCreated.ChangeCreatedCDEvent()
 		if err != nil {
 			return "", err
 		}
-		log.Println("Translated patchset-created gerrit event into dev.cdevents.change.created CDEvent: ", cdEvent)
+		Log().Info("Translated patchset-created gerrit event into dev.cdevents.change.created CDEvent: ", cdEvent)
 	} else {
 		cdEvent, err = patchsetCreated.ChangeUpdatedCDEvent()
 		if err != nil {
 			return "", err
 		}
-		log.Println("Translated patchset-created gerrit event into dev.cdevents.change.updated CDEvent: ", cdEvent)
+		Log().Info("Translated patchset-created gerrit event into dev.cdevents.change.updated CDEvent: ", cdEvent)
 	}
 
 	return cdEvent, nil
@@ -119,32 +118,32 @@ func (pEvent *GerritEvent) HandleCommentAddedEvent() (string, error) {
 	var commentAdded CommentAdded
 	err := json.Unmarshal([]byte(pEvent.Event), &commentAdded)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal GerritEvent into CommentAdded struct", err)
+		Log().Error("Error occurred while Unmarshal GerritEvent into CommentAdded struct", err)
 		return "", err
 	}
-	log.Println("CommentAdded GerritEvent received for project : ", commentAdded.Project.Name)
+	Log().Info("CommentAdded GerritEvent received for project : ", commentAdded.Project.Name)
 	commentAdded.RepoURL = pEvent.RepoURL
 	cdEvent, err := commentAdded.ChangeReviewedCDEvent()
 	if err != nil {
 		return "", err
 	}
-	log.Println("Translated comment-added gerrit event into dev.cdevents.change.reviewed CDEvent: ", cdEvent)
+	Log().Info("Translated comment-added gerrit event into dev.cdevents.change.reviewed CDEvent: ", cdEvent)
 	return cdEvent, nil
 }
 func (pEvent *GerritEvent) HandleChangeMergedEvent() (string, error) {
 	var changeMerged ChangeMerged
 	err := json.Unmarshal([]byte(pEvent.Event), &changeMerged)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal GerritEvent into ChangeMerged struct", err)
+		Log().Error("Error occurred while Unmarshal GerritEvent into ChangeMerged struct", err)
 		return "", err
 	}
-	log.Println("ChangeMerged GerritEvent received for project : ", changeMerged.Project.Name)
+	Log().Info("ChangeMerged GerritEvent received for project : ", changeMerged.Project.Name)
 	changeMerged.RepoURL = pEvent.RepoURL
 	cdEvent, err := changeMerged.ChangeMergedCDEvent()
 	if err != nil {
 		return "", err
 	}
-	log.Println("Translated change-merged gerrit event into dev.cdevents.change.merged CDEvent: ", cdEvent)
+	Log().Info("Translated change-merged gerrit event into dev.cdevents.change.merged CDEvent: ", cdEvent)
 	return cdEvent, nil
 }
 
@@ -152,15 +151,15 @@ func (pEvent *GerritEvent) HandleChangeAbandonedEvent() (string, error) {
 	var changeAbandoned ChangeAbandoned
 	err := json.Unmarshal([]byte(pEvent.Event), &changeAbandoned)
 	if err != nil {
-		log.Println("Error occurred while Unmarshal GerritEvent into ChangeAbandoned struct", err)
+		Log().Error("Error occurred while Unmarshal GerritEvent into ChangeAbandoned struct", err)
 		return "", err
 	}
-	log.Println("ChangeAbandoned GerritEvent received for project : ", changeAbandoned.Project.Name)
+	Log().Info("ChangeAbandoned GerritEvent received for project : ", changeAbandoned.Project.Name)
 	changeAbandoned.RepoURL = pEvent.RepoURL
 	cdEvent, err := changeAbandoned.ChangeAbandonedCDEvent()
 	if err != nil {
 		return "", err
 	}
-	log.Println("Translated change-abandoned gerrit event into dev.cdevents.change.abandoned CDEvent: ", cdEvent)
+	Log().Info("Translated change-abandoned gerrit event into dev.cdevents.change.abandoned CDEvent: ", cdEvent)
 	return cdEvent, nil
 }
