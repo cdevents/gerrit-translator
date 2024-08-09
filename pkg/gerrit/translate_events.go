@@ -82,6 +82,9 @@ func (pEvent *GerritEvent) HandleRefUpdatedEvent() (string, error) {
 			return "", err
 		}
 		Log().Info("Translated ref-updated gerrit event into dev.cdevents.branch.deleted CDEvent: ", cdEvent)
+	} else {
+		Log().Info("Ignoring handling ref-updated gerrit event for refName : ", refUpdated.RefUpdate.RefName)
+		return "", errors.New("ignoring translating ref-updated gerrit event")
 	}
 
 	return cdEvent, nil
