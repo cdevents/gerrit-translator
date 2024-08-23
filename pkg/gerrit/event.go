@@ -34,7 +34,7 @@ func NewGerritEvent(event string, repoURL string) (pEvent *GerritEvent) {
 }
 
 func HandleTranslateGerritEvent(event string, header http.Header) (string, error) {
-	Log().Info("Handle translation into CDEvent from Gerrit event %s\n", event)
+	Log().Debug("Handle translation into CDEvent from Gerrit event %s\n", event)
 	repoURL := ""
 	if header.Get("X-Origin-Url") != "" {
 		repoURL = header.Get("X-Origin-Url")
@@ -45,7 +45,7 @@ func HandleTranslateGerritEvent(event string, header http.Header) (string, error
 		Log().Error("Error translating Gerrit event into CDEvent %s\n", err)
 		return "", err
 	}
-	Log().Info("Gerrit Event translated into CDEvent %s\n", cdEvent)
+	Log().Debug("Gerrit Event translated into CDEvent %s\n", cdEvent)
 	return cdEvent, nil
 }
 
@@ -61,37 +61,37 @@ func (pEvent *GerritEvent) TranslateIntoCDEvent() (string, error) {
 	Log().Info("handling translating to CDEvent from Gerrit Event type: %s\n", eventType)
 
 	switch eventType {
-	case "project-created":
+	case ProjectCreatedEventType:
 		cdEvent, err = pEvent.HandleProjectCreatedEvent()
 		if err != nil {
 			return "", err
 		}
-	case "ref-updated":
+	case RefUpdatedEventType:
 		cdEvent, err = pEvent.HandleRefUpdatedEvent()
 		if err != nil {
 			return "", err
 		}
-	case "project-head-updated":
+	case ProjectUpdatedEventType:
 		cdEvent, err = pEvent.HandleProjectHeadUpdatedEvent()
 		if err != nil {
 			return "", err
 		}
-	case "patchset-created":
+	case PatchsetCreatedEventType:
 		cdEvent, err = pEvent.HandlePatchsetCreatedEvent()
 		if err != nil {
 			return "", err
 		}
-	case "comment-added":
+	case CommentAddedEventType:
 		cdEvent, err = pEvent.HandleCommentAddedEvent()
 		if err != nil {
 			return "", err
 		}
-	case "change-merged":
+	case ChangeMergedEventType:
 		cdEvent, err = pEvent.HandleChangeMergedEvent()
 		if err != nil {
 			return "", err
 		}
-	case "change-abandoned":
+	case ChangeAbandonedEventType:
 		cdEvent, err = pEvent.HandleChangeAbandonedEvent()
 		if err != nil {
 			return "", err
